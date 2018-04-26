@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Moolean</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+    <script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyB5-x01Wi1-YTqZ3R6ECqfhwnQsVx4QCNY",
+        authDomain: "moolean-898a2.firebaseapp.com",
+        databaseURL: "https://moolean-898a2.firebaseio.com",
+        projectId: "moolean-898a2",
+        storageBucket: "moolean-898a2.appspot.com",
+        messagingSenderId: "852782399249"
+    };
+    firebase.initializeApp(config);
+     // Get a reference to the database service
+    var database = firebase.database();
+    </script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.41.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.41.0/mapbox-gl.css' rel='stylesheet' />
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZtJq8wRVCGH66I2zhugZHCs_ma0rB_Uc&callback=initMap"
+    type="text/javascript"></script>
+    <!-- GeoFire -->
+    <script src="https://cdn.firebase.com/libs/geofire/4.1.2/geofire.min.js"></script>
+    <style>
+        body { margin:0; padding:0; font-family: "Helvetica Neue", "Arial Black", "Microsoft JhengHei";}
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+        #logo { position: fixed;
+                top: 3%;
+                left: 3%;
+                width: 90px;
+                z-index: 10000;
+        }
+        #introMoolean { position: fixed;
+                top: 15%;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 10000;
+                background-color: white;
+                display: none;
+        }
+        #introTitle {
+            font-size: 40px;
+            font-weight: bold;
+            margin: 60px 80px 20px 80px;
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+        #introText {
+            font-size: 18px;
+            font-weight: normal;
+            margin: 0px 80px 50px 80px;
+            text-align: center;
+        }
+        #introSince {
+            font-size: 16px;
+            font-weight: lighter;
+            margin: 80px 80px 0px 80px;
+            color: rgba(0, 0, 0,0.54);
+            text-align: center;
+            letter-spacing: 0.05em;
+        }
+        #introButton {
+            margin: 30px;
+            outline:none;
+            background-color: transparent; 
+            border: 0; 
+            font-size:50px;
+            font-weight: lighter;
+            color: rgba(0, 0, 0,0.54);
+        }
+        #dialog {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            z-index: 1000;
+            background-color: white;
+            /* display: none; */
+        }
+        #guideText {
+            /* padding: 20px 0; */
+            font-size: 18px;
+            display: none;
+            color: rgba(225, 225, 225, 0.9);
+            letter-spacing: 0.1em;
+            opacity: 1;
+            z-index: 2000;
+        }
+        h1 {
+            position: relative;
+            font-size: 20px;
+        }
+        #dialogTitle {
+            font-weight: normal;
+            margin: 90px 80px 50px 80px;
+        }
+        #locateButton {
+            outline:none;
+            background-color: transparent; 
+            border: 0; 
+            font-size:180px;
+            padding: 0;
+            margin: 0;
+            line-height: 85%;
+        }
+        #location {
+            margin: 0 60px 0 60px;
+            text-align: center;
+            font-size: 20px;
+        }
+        #locateButton:hover {
+            color: gray;
+        }
+        #locateButton:focus {
+            background-color: transparent; 
+            border: 0;  
+        }
+        #opencloseButton {
+            position: fixed;
+            bottom: 10px;
+            right: -70px;
+            z-index: 1000;
+            font-size:15px;
+            border-radius: 30px;
+            height: 36px;
+            width: 36px;
+            border: 0; 
+            padding: 10px;
+            margin: 0;
+            background-color: white;
+        }
+        #nextButton {
+            font-weight: normal;            
+            outline:none;
+            background-color: transparent; 
+            border: 1; 
+            border-radius: 10px;
+            font-size:20px;
+            padding: 10px 50px 10px 50px;
+            margin: 60px;
+            visibility: hidden;
+        }
+        #nextButton:hover {
+            -webkit-transition-duration: 0.2s; /* Safari */
+            background-color: black;
+            color: white;
+        }
+        #yButton {
+            -webkit-transition-duration: 0.4s; /* Safari */
+            outline:none;
+            background-color: transparent; 
+            border: 1px solid #4CAF50;
+            border-radius: 2000px;
+            padding: 50px;
+            margin: 25px;
+            margin-left: 80px;
+            display: none;
+        }
+        #yButton:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #nButton {
+            -webkit-transition-duration: 0.4s; /* Safari */
+            outline:none;
+            background-color: transparent; 
+            border: 1px solid #008CBA; 
+            border-radius: 2000px;
+            padding: 50px;
+            margin: 25px;
+            margin-right: 80px;
+            display: none;
+        }
+        #nButton:hover {
+            background-color: #008CBA;
+            color: white;
+        }
+        #sendMood {
+            font-weight: normal;            
+            outline:none;
+            background-color: transparent; 
+            border: 1; 
+            border-radius: 10px;
+            font-size:20px;
+            padding: 10px 50px 10px 50px;
+            margin: 60px;
+            display: none;
+        }
+        #sendMood:hover {
+            -webkit-transition-duration: 0.3s; /* Safari */
+            background-color: #4388E4;
+            color: white;
+        }
+        @media only screen and (max-width: 500px) {
+            /* 字體大小除以2(加3) */
+            #logo { 
+                width: 60px;
+            }
+            #guideText {
+            font-size: 12px;
+            display: none;
+            color: white;
+            font-weight: bold;
+            opacity: 1;
+            z-index: 2000;
+            }
+            h1 {
+                position: relative;
+                font-size: 10px;
+            }
+            #dialogTitle {
+                font-weight: normal;
+                margin: 45px 40px 15px 40px;
+            }
+            #locateButton {
+                outline:none;
+                background-color: transparent; 
+                border: 0; 
+                font-size:90px;
+                padding: 0;
+                margin: 0;
+            }
+            #location {
+                margin: 0 30px 0 30px;
+                text-align: center;
+                font-size: 10px;
+            }
+            #opencloseButton {
+                position: fixed;
+                bottom: 8px;
+                right: -50px;
+                z-index: 1000;
+                font-size:10px;
+                border-radius: 30px;
+                height: 35px;
+                width: 35px;
+                border: 0; 
+                padding: 10px;
+                margin: 0;
+                background-color: white;
+            }
+            #nextButton {
+                border-radius: 5px;
+                font-size:10px;
+                padding: 5px 25px 5px 25px;
+                margin: 30px;
+            }
+            #yButton {
+                padding: 25px;
+                margin: 12px;
+                margin-left: 40px;
+            }
+            #nButton {
+                padding: 25px;
+                margin: 12px;
+                margin-left: 40px;
+            }
+            #sendMood {
+                border-radius: 5px;
+                font-size:10px;
+                padding: 5px 25px 5px 25px;
+                margin: 30px;
+            }
+        }
+        .markern {
+        background-size: cover;
+        background-color: #008CBA;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        }
+        .markery {
+        background-size: cover;
+        background-color: #4CAF50;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <img id="logo" src="res/img/Moolean logo.png" onclick="document.getElementById('introMoolean').style.display='block'"></imag>
+
+    <div id="introMoolean">
+        <center>
+            <h1 id="introTitle">Moolean</h1>
+            <p id="introText">World's _Mood</p>
+            <h2 id="introSince">~ since 2017 ~</h2>
+            <button id="introButton" onclick="document.getElementById('introMoolean').style.display='none'">&times;</button>
+        </center>
+    </div>
+
+        <div id='map'></div>
+        <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaGF6bWF0aCIsImEiOiJjajk3dWQ5eWQwYXpwMnFydzR1b2RiOHUxIn0.k4XQ3THMnkHgKjVqRBEzDw';
+        var map = new mapboxgl.Map({
+            container: 'map', // container id
+            style: 'mapbox://styles/hazmath/cja7rip1b3p6y2smesl6ox54u',
+            center: [121.44, 25.17], // starting position
+            zoom: 10, // starting zoom
+            maxZoom: 18
+        });
+        
+        // Add zoom and rotation controls to the map.
+        map.addControl(new mapboxgl.NavigationControl());
+        </script>
+
+    <div id="dialog">
+        <center>
+            <p id = "guideText">這是大家的心情</p>
+            <h1 id = "dialogTitle">請點擊下方按鈕定位</h1>
+            <button id = "locateButton" onclick="getLocation()">*</button>
+            <p id="location">location</p>
+            <br>
+                <button id = "yButton" type="button" onclick="yButtonClicked()"></button>
+                <button id = "nButton" type="button" onclick="nButtonClicked()"></button>
+            <br>
+            <button id = "nextButton" onclick="updateUI()">繼續</button>
+            <button id = "sendMood" onclick="sendMood()">送出</button>
+            <button id = "opencloseButton" onclick="openORclose()">↓</button>
+
+           <script>
+               var locationtext = document.getElementById("location");
+               var location_Lati_and_Long = new Object();
+            
+               function getLocation() {//取得 經緯度
+                   if (navigator.geolocation) {//
+                       navigator.geolocation.getCurrentPosition(showPosition);//有拿到位置就呼叫 showPosition 函式
+                   } else { 
+                    locationtext.innerHTML = "您的瀏覽器不支援 顯示地理位置 API ，請使用其它瀏覽器開啟 這個網址";
+                   }
+               }
+            
+               function showPosition(position) {
+
+                     //first-> fly
+                        map.flyTo({
+                        center: [
+                        position.coords.longitude,
+                        position.coords.latitude],
+                        zoom: 15
+                     });
+
+                     //紀錄位置變數
+                     location_Lati_and_Long = position;
+
+                var geocoder = new google.maps.Geocoder();
+                // google.maps.LatLng 物件
+                var coord = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                // 傳入 latLng 資訊至 geocoder.geocode
+            geocoder.geocode({'latLng': coord }, function(results, status) {
+
+                 if (status === google.maps.GeocoderStatus.OK) {
+                   // 如果有資料就會回傳
+                   if (results) {
+                       locationtext.innerHTML = "您的位置：" + "<br>" + results[0].formatted_address;
+                       document.getElementById("nextButton").style.visibility="visible";
+                    }
+                    else {
+                        locationtext.innerText = "沒有資料";
+                    }
+                }
+                 // 經緯度資訊錯誤
+                else {
+                  alert("Reverse Geocoding failed because: " + status);
+                  document.getElementById("dialogTitle").innerText="Reverse Geocoding failed because: " + status;
+                }
+                });
+               }
+
+               function updateUI() {
+                document.getElementById("dialogTitle").innerText="您現在心情如何？";
+                document.getElementById("locateButton").style.display="none";
+                document.getElementById("location").style.display="none";
+                document.getElementById("nextButton").style.display="none";
+                document.getElementById("yButton").style.display="inline-block";
+                document.getElementById("nButton").style.display="inline-block";
+                document.getElementById("sendMood").style.display="block";
+               }
+
+               var yORn = 0; //初始化為偽
+               function yButtonClicked() {
+                yORn = 1;
+                document.getElementById("yButton").style.backgroundColor="#4CAF50";
+                document.getElementById("nButton").style.backgroundColor="#ffffff";
+               }
+
+               function nButtonClicked() {
+                yORn = 0;
+                document.getElementById("nButton").style.backgroundColor="#008CBA";
+                document.getElementById("yButton").style.backgroundColor="#ffffff";
+               }
+
+               var Moolean = class {
+                   constructor(location_Lati_and_Long, yORn, time) {
+                       this.location_Lati_and_Long = location_Lati_and_Long;
+                       this.yORn = yORn;
+                       this.time = time; //國際標準時間
+                   }
+               };
+
+               function sendMood() {
+                //顯示新增Moolean光點
+                var myMoolean = new Moolean(location_Lati_and_Long, yORn, new Date());
+                console.log(myMoolean.time);
+                //上傳firebase
+                writMooleanToFirebase(myMoolean);
+                //update UI
+                openORclose();
+                showMoodMarker(myMoolean.location_Lati_and_Long.coords.longitude, myMoolean.location_Lati_and_Long.coords.latitude, myMoolean.yORn, myMoolean.time);
+                map.flyTo({
+                        center: [
+                        myMoolean.location_Lati_and_Long.coords.longitude,
+                        myMoolean.location_Lati_and_Long.coords.latitude],
+                        zoom: 17
+                     });
+               }
+
+               function writMooleanToFirebase(moolean) {
+                console.log(moolean.time);
+                console.log(moolean.time.getUTCFullYear());
+                console.log(moolean.time.getUTCMonth());
+                console.log(moolean.time.getUTCDate());
+                    firebase.database().ref(moolean.time.getUTCFullYear()+"/" 
+                    + moolean.time.getUTCMonth()+"/" 
+                    + moolean.time.getUTCDate()+"/" )
+                    .push({
+                        coordinates: "[" +
+                            moolean.location_Lati_and_Long.coords.longitude + "," +
+                            moolean.location_Lati_and_Long.coords.latitude +
+                                    "]",
+                        location: locationtext.innerHTML,
+                        timestamp: moolean.time.toString(),
+                        yORn: moolean.yORn
+                    });
+                    }
+
+               function showMoodMarker(latitude, longitude, yORn, time) {
+                var singlegeojson = {
+                type: 'FeatureCollection',
+                features: [
+                {
+                    type: 'Feature',
+                    geometry: {
+                    type: 'Point',
+                    coordinates: [latitude, longitude]
+                    },
+                    properties: {
+                    title: 'Mapbox',
+                    timestamp: time,
+                    yORn: yORn
+                    }
+                }]
+                };
+
+                // add markers to map
+                singlegeojson.features.forEach(function(marker) {
+
+                // create a HTML element for each feature
+                var el = document.createElement('div');
+                if(yORn == 0) {
+                    el.className = 'markern';
+                }
+                else {
+                    el.className = 'markery';
+                }
+
+                // make a marker for each feature and add to the map
+                new mapboxgl.Marker(el)
+                .setLngLat(marker.geometry.coordinates)
+                .addTo(map);
+                });
+               }
+
+               d
+
+                var geojson = {
+                type: 'FeatureCollection',
+                features: [{
+                    type: 'Feature',
+                    geometry: {
+                    type: 'Point',
+                    coordinates: [-77.032, 38.913]
+                    },
+                    properties: {
+                    title: 'Mapbox',
+                    description: 'Washington, D.C.'
+                    }
+                },
+                {
+                    type: 'Feature',
+                    geometry: {
+                    type: 'Point',
+                    coordinates: [-122.414, 37.776]
+                    },
+                    properties: {
+                    title: 'Mapbox',
+                    description: 'San Francisco, California'
+                    }
+                }]
+                };
+
+
+
+                // add markers to map
+                geojson.features.forEach(function(marker) {
+
+                // create a HTML element for each feature
+                var el = document.createElement('div');
+                el.className = 'markery';
+
+                // make a marker for each feature and add to the map
+                new mapboxgl.Marker(el)
+                .setLngLat(marker.geometry.coordinates)
+                .addTo(map);
+                });
+
+                    //             var firebaseData = {
+                    // "messages" : {
+                    //     "-KUE2EwfvbI48Azw01Hv" : {
+                    //     "geometry" : {
+                    //         "coordinates" : [ 28.6618976, 77.22739580000007 ],
+                    //         "type" : "Point"
+                    //     },
+                    //     "properties" : {
+                    //         "description" : "xyz",
+                    //         "hashtag" : "#xyz",
+                    //         "imageUrl" : "xyz.jpg",
+                    //         "name" : "Xyz Xyz",
+                    //         "photoUrl" : "xyz.jpg",
+                    //         "title" : "XYZ"
+                    //     },
+                    //     "type" : "Issue"
+                    //     },
+                    //     "-KUD2EwfvbI48Azw01Hv" : {
+                    //     "geometry" : {
+                    //         "coordinates" : [ 12.9715987, 77.59456269999998 ],
+                    //         "type" : "Point"
+                    //     },
+                    //     "properties" : {
+                    //         "description" : "xyz",
+                    //         "hashtag" : "#xyz",
+                    //         "imageUrl" : "xyz.jpg",
+                    //         "name" : "Xyz Xyz",
+                    //         "photoUrl" : "xyz.jpg",
+                    //         "title" : "XYZ"
+                    //     },
+                    //     "type" : "Issue"
+                    //     }
+                    // }
+                    // }
+
+                    // var firebaseGeojsonFeatures = [];
+                    // for (var key in firebaseData.messages) {
+                    //     var f = firebaseData.messages[key];
+                    // f.type = "Feature";
+                    // firebaseGeojsonFeatures.push(f);
+                    // }
+                    // map.on('load', function() {
+                    //     map.addSource('firebase', {
+                    //     type: 'geojson',
+                    // data: {type: 'FeatureCollection',
+                    //             features: firebaseGeojsonFeatures
+                    //     }
+                    //     });
+
+                    // map.addLayer({
+                    //     id: 'firebase',
+                    //     source: 'firebase',
+                    //     type: 'circle',
+                    //     paint: {
+                    //     "circle-color":'#008CBA',
+                    //     'circle-radius': 15
+                    //     }
+                    // })
+                    // })
+
+           </script>
+
+        </center>
+    </div>
+   
+    <script>
+            var sign = 1;
+
+            function openORclose() {
+                if (sign%2 == 1){
+                    sign++;
+                    document.getElementById("dialog").style.height="8%";
+                    document.getElementById("dialog").style.backgroundColor="rgba(225, 225, 225, 0.2)";
+                    document.getElementById("opencloseButton").innerText="↑";
+                    document.getElementById("guideText").style.display="block";
+                    var clientHeight = document.getElementById('dialog').clientHeight;
+                    document.getElementById("guideText").style.lineHeight=clientHeight + "px";
+                } else {
+                    sign++;
+                    document.getElementById("dialog").style.height="";
+                    document.getElementById("dialog").style.backgroundColor="rgba(225, 225, 225, 1)";
+                    document.getElementById("opencloseButton").innerText="↓";
+                    document.getElementById("guideText").style.display="none";
+                }
+            }
+        </script>
+        
+</body>
+</html>
