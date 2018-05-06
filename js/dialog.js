@@ -1,12 +1,7 @@
-var locationtext = document.getElementById("location");
 var location_Lati_and_Long = new Object();
-var geocoder = new google.maps.Geocoder();
-// google.maps.LatLng 物件
-var coord = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-// 傳入 latLng 資訊至 geocoder.geocode
 
 function getLocation() {//取得 經緯度
-    if (navigator.geolocation) {//
+    if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);//有拿到位置就呼叫 showPosition 函式
     } else { 
     locationtext.innerHTML = "您的瀏覽器不支援 顯示地理位置 API ，請使用其它瀏覽器開啟 這個網址";
@@ -26,10 +21,12 @@ function showPosition(position) {
     //紀錄位置變數
     location_Lati_and_Long = position;
 
-        geocoder.geocode({'latLng': coord }, function(results, status) {
-
-            if (status === google.maps.GeocoderStatus.OK) {
-            // 如果有資料就會回傳
+    var coord = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    var geocoder = new google.maps.Geocoder;
+    geocoder.geocode({'latLng': coord }, function(results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+            var locationtext = document.getElementById("location");
+        // 如果有資料就會回傳
             if (results) {
                 locationtext.innerHTML = "您的位置：" + "<br>" + results[0].formatted_address;
                 document.getElementById("nextButton").style.visibility="visible";
@@ -38,12 +35,12 @@ function showPosition(position) {
                 locationtext.innerText = "沒有資料";
             }
         }
-            // 經緯度資訊錯誤
+        // 經緯度資訊錯誤
         else {
             alert("Reverse Geocoding failed because: " + status);
             document.getElementById("dialogTitle").innerText="Reverse Geocoding failed because: " + status;
         }
-        });
+    });
 }
 
 function updateUI() {
@@ -51,8 +48,8 @@ function updateUI() {
     document.getElementById("locateButton").style.display="none";
     document.getElementById("location").style.display="none";
     document.getElementById("nextButton").style.display="none";
-    document.getElementById("yButton").style.display="inline-block";
-    document.getElementById("nButton").style.display="inline-block";
+    document.getElementById("yButton").style.display="inline";
+    document.getElementById("nButton").style.display="inline";
     document.getElementById("sendMood").style.display="block";
 }
 
@@ -95,11 +92,12 @@ function sendMood() {
 }
 
 function writMooleanToFirebase(moolean) {
+    
     console.log(moolean.time);
     console.log(moolean.time.getUTCFullYear());
     console.log(moolean.time.getUTCMonth());
     console.log(moolean.time.getUTCDate());
-        firebase.database().ref(moolean.time.getUTCFullYear()+"/" 
+    firebase.database().ref(moolean.time.getUTCFullYear()+"/" 
         + moolean.time.getUTCMonth()+"/" 
         + moolean.time.getUTCDate()+"/" )
         .push({

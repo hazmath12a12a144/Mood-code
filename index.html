@@ -5,32 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="./css/reset.css">
-    <link rel="stylesheet" href="./css/css.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-    <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase-database.js"></script>
     <script>
-    // Initialize Firebase
-    var config = {
-        apiKey: "AIzaSyB5-x01Wi1-YTqZ3R6ECqfhwnQsVx4QCNY",
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyDRVy_Y6mXPUL7teOw3PfwDFks7au1Y3Nw",
         authDomain: "moolean-898a2.firebaseapp.com",
         databaseURL: "https://moolean-898a2.firebaseio.com",
         projectId: "moolean-898a2",
         storageBucket: "moolean-898a2.appspot.com",
         messagingSenderId: "852782399249"
-    };
-    firebase.initializeApp(config);
-     // Get a reference to the database service
-    var database = firebase.database();
+      };
+      firebase.initializeApp(config);
     </script>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.41.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.41.0/mapbox-gl.css' rel='stylesheet' />
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZtJq8wRVCGH66I2zhugZHCs_ma0rB_Uc&callback=initMap"
-    type="text/javascript"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZ31TueT6_egnNuU6UuB-m3WTW0Yi0AZ0&callback=initMap"
+    async defer></script>
     <!-- GeoFire -->
     <script src="https://cdn.firebase.com/libs/geofire/4.1.2/geofire.min.js"></script>
     <script src="./js/indexJS.js"></script> 
     <script src="./js/dialog.js"></script> 
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/css.css">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous"> -->
+    <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
     <style>
     </style>
 </head>
@@ -51,16 +50,18 @@
     <div id="dialog">
         <center>
             <p id = "guideText">這是大家的心情</p>
-            <h1 id = "dialogTitle">請點擊下方按鈕定位</h1>
-            <button id = "locateButton" onclick="getLocation()">*</button>
-            <p id="location">location</p>
-            <br>
-            <button id = "yButton" type="button" onclick="yButtonClicked()"></button>
-            <button id = "nButton" type="button" onclick="nButtonClicked()"></button>
-            <br>
-            <button id = "nextButton" onclick="updateUI()">繼續</button>
-            <button id = "sendMood" onclick="sendMood()">送出</button>
-            <button id = "opencloseButton" onclick="openORclose()">↓</button>
+            <div id="dialogContent">
+                <h1 id = "dialogTitle">請點擊下方按鈕定位</h1>
+                <button id = "locateButton" onclick="getLocation()">*</button>
+                <p id="location">location</p>
+                <br>
+                <button id = "yButton" type="button" onclick="yButtonClicked()"></button>
+                <button id = "nButton" type="button" onclick="nButtonClicked()"></button>
+                <br>
+                <button id = "nextButton" onclick="updateUI()">繼續</button>
+                <button id = "sendMood" onclick="sendMood()">送出</button>
+                <button id = "opencloseButton" onclick="openORclose()">↓</button>
+            </div>
         </center>
     </div>
    
@@ -73,10 +74,11 @@
             zoom: 10, // starting zoom
             maxZoom: 18
         });
-
         // Add zoom and rotation controls to the map.
         map.addControl(new mapboxgl.NavigationControl());
     </script>
         
 </body>
 </html>
+
+
