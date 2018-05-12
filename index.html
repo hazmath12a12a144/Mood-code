@@ -3,9 +3,9 @@
 <head>
     <title>Moolean</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.1/firebase.js"></script>
     <script>
       // Initialize Firebase
       var config = {
@@ -39,8 +39,10 @@
     <div id="introMoolean">
         <center>
             <h1 id="introTitle">Moolean</h1>
-            <p id="introText">World's _Mood</p>
+            <p id="introText">嘉義_Mood</p>
+            <div id="moodBar"></div>
             <h2 id="introSince">~ since 2017 ~</h2>
+            <p id="introSubtitle">From Taiwan</p>
             <button id="introButton" onclick="document.getElementById('introMoolean').style.display='none'">&times;</button>
         </center>
     </div>
@@ -53,7 +55,7 @@
             <div id="dialogContent">
                 <h1 id = "dialogTitle">請點擊下方按鈕定位</h1>
                 <button id = "locateButton" onclick="getLocation()">*</button>
-                <p id="location">location</p>
+                <p id="location">定位</p>
                 <br>
                 <button id = "yButton" type="button" onclick="yButtonClicked()"></button>
                 <button id = "nButton" type="button" onclick="nButtonClicked()"></button>

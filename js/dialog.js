@@ -15,7 +15,7 @@ function showPosition(position) {
     center: [
     position.coords.longitude,
     position.coords.latitude],
-    zoom: 15
+    zoom: 17
     });
 
     //紀錄位置變數
@@ -87,17 +87,24 @@ function sendMood() {
             center: [
             myMoolean.location_Lati_and_Long.coords.longitude,
             myMoolean.location_Lati_and_Long.coords.latitude],
-            zoom: 17
+            zoom: 15
             });
 }
 
 function writMooleanToFirebase(moolean) {
-    
-    console.log(moolean.time);
-    console.log(moolean.time.getUTCFullYear());
-    console.log(moolean.time.getUTCMonth());
-    console.log(moolean.time.getUTCDate());
-    firebase.database().ref(moolean.time.getUTCFullYear()+"/" 
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyDRVy_Y6mXPUL7teOw3PfwDFks7au1Y3Nw",
+        authDomain: "moolean-898a2.firebaseapp.com",
+        databaseURL: "https://moolean-898a2.firebaseio.com",
+        projectId: "moolean-898a2",
+        storageBucket: "moolean-898a2.appspot.com",
+        messagingSenderId: "852782399249"
+    };
+    firebase.initializeApp(config);
+
+    firebase.database().ref(
+        moolean.time.getUTCFullYear()+"/" 
         + moolean.time.getUTCMonth()+"/" 
         + moolean.time.getUTCDate()+"/" )
         .push({
@@ -105,7 +112,7 @@ function writMooleanToFirebase(moolean) {
                 moolean.location_Lati_and_Long.coords.longitude + "," +
                 moolean.location_Lati_and_Long.coords.latitude +
                         "]",
-            location: locationtext.innerHTML,
+            location: document.getElementById("location"),
             timestamp: moolean.time.toString(),
             yORn: moolean.yORn
         });
